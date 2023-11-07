@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
 
 @Entity('dblog')
-export class DbLogEntity {
+export class UrlEntity {
     @PrimaryGeneratedColumn()
 id: number;
 
