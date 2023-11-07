@@ -1,3 +1,6 @@
 import { Module } from '@nestjs/common';
 import { UrlController } from './url.controller'
-import { UrlEntity } from '../../entities/common.'
+
+
+import { UrlRedirectController } from './url.controller'
+import { UrlRepo } from './repositories/url-repo';
