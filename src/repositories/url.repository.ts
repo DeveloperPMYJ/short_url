@@ -4,9 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UrlEntity } from 'src/entities/url.entity'
 import { Repository } from 'typeorm'
 
-// type = {
-
-// }
 
 @Injectable()
 export class UrlRepo {
@@ -15,21 +12,3 @@ export class UrlRepo {
         private urlRepo: Repository<UrlEntity>
     ) {}
 }
-// 1. original url 저장 (insert into)
-
-
-// 2. shorten url 저장 (insert into)
-
-
-    // shorten url 중복 유효성 검사 
-
-
-
-// 3. user ip 수집 
-
-    // 하루 30개 
-
-
-
-
-// 4. 서버에서 shorten url로 조회 (select) : mapping 된 url을 redirect 시킴 
