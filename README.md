@@ -34,6 +34,14 @@
 - **original url로 Redirect**
 
 
+### DB 설정
+
+- ormconfig.js 파일 생성
+- shorturl 칼럼에 unique 제약조건 추가
+
+일반적으로 사용되는 https://www.shorturl.at/ , https://bitly.com/ 를 참고하여, 도메인 부분은 localhost:port로 default 값으로 하고, 뒷부분이 변경되도록
+
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
