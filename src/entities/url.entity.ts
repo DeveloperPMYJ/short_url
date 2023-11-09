@@ -4,12 +4,12 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeor
 @Entity('dblog')
 export class UrlEntity {
     @PrimaryGeneratedColumn()
-id: number;
+    id: number;
 
-    @Column({ type: 'varchar', length: 200, nullable: false })
+    @Column({ type: 'varchar', length: 200, nullable: false  })
     originalUrl: string;
 
-    @Column({ type: 'varchar', length: 200, nullable: false })
+    @Column({ unique:true, type: 'varchar', length: 200, nullable: false }) // shortenUrl은 중복되지 않아야 함
     shortUrl: string;
 
     @Column({ type: 'varchar', length: 200, nullable: false })

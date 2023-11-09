@@ -11,5 +11,5 @@ export class UrlRepo {
         @InjectRepository(UrlEntity)
         private urlRepo: Repository<UrlEntity>
     ) {}
-
+        
 }
