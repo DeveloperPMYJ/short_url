@@ -4,7 +4,6 @@
 
 
 * yarn add shortid
-or
 * npm i shortid 
 
 ### URL 단축 서비스의 활용
