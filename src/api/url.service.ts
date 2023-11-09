@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable, NotFoundException, Res } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { UrlEntity } from 'src/entities/url.entity'
@@ -18,12 +18,8 @@ export class UrlService {
     //1. short url 생성 
     async createShortUrl(originalUrl: string, userIp: string): Promise<string> {
         
-        // localhost:3000/ 뒤에 위치하는 shorturl
-        const baseUrl = 'http://localhost:3000'; // 기본 Url
-        const shortUrl = generateUniqueShortUrl(length);    // 1-1. short url 고유하게 만드는 로직  (중복되지 않는 short url)
-        const fullShortUrl = baseUrl + shortUrl; 
 
-        // 1-2. user ip 로 하루 short url 변환 횟수 확인 
+        // 1-1. user ip 로 하루 short url 변환 횟수 확인 
         const today = new Date();
         today.setHours(0,0,0,0);
         const urlCount = await this.urlRepo                            // a) await = this.urlRepo 객체의 createQueryBuilder 메서드가 반환한 Promise를 대기하고 있음
@@ -37,19 +33,39 @@ export class UrlService {
             throw new NotFoundException('Short URL 변환 횟수가 제한을 초과하였습니다');
         }
 
-        // UrlEntity 생성, 데이터베이스에 저장 (repo)
-        const UrlEntity = this.urlRepo.create({   // TypeORM의 Repository 이용해서 UrlEntity 생성 (create)
+
+        // "localhost:3000/ 뒤에 위치하는 shorturl" = fullShortUrl 만들기
+        const baseUrl = 'http://localhost:3000'; // 기본 Url
+        const shortUrl = generateUniqueShortUrl(length);    // 1-2. short url 고유하게 만드는 로직  (중복되지 않는 short url)
+        const fullShortUrl = baseUrl + shortUrl; 
+
+
+
+        // 1-3. UrlEntity 생성, 데이터베이스에 'shortUrl,originalUrl, userIp' 저장 (repo)
+        const UrlEntity = this.urlRepo.create({            // TypeORM의 Repository 이용해서 UrlEntity 생성 (create)
             shortUrl,
             originalUrl,
             userIp
         });
-        await this.urlRepo.save(UrlEntity);      // 생성된 UrlEntity를 데이터베이스에 저장 (save)
-        return shortUrl;
+        await this.urlRepo.save(UrlEntity);                   // 생성된 UrlEntity를 데이터베이스에 저장 (save)
 
+
+        // "localhost:3000/ 뒤에 위치하는 shorturl" = fullShortUrl 을 respond로 보내주기 
+        return fullShortUrl 
         
     }
 
     // 2. "새로운 URL 리디렉션 api" server - redirect -> [service에서 originalUrl 호출] 
+
+    // 2-1. 데이터베이스에 저장된 shortUrl을 가져오는 로직
+    async redirectByShortUrl(@Res() res:Response, shortUrl:string):Promise<void> {
+        const originalUrl = await this.findOriginalUrlByShorten(shortUrl);
+
+        if(!originalUrl){
+            throw new NotFoundException ('Short URL에 해당되는 원본 URL을 찾을 수 없습니다')
+        }
+    }
+    // 2-2. "originalUrl 호출" shortUrl에 해당하는 UrlEntity를 데이터베이스에서 찾기
     async findOriginalUrlByShorten(shortUrl: string): Promise<string | undefined> {
         const urlEntity = await this.urlRepo.findOne({ where:{shortUrl: shortUrl}});   //  findOne 메서드를 사용할 때 해당 엔터티의 속성과 일치하는 조건을 전달해야 한다
         return urlEntity ? urlEntity.originalUrl : undefined;
@@ -57,9 +73,9 @@ export class UrlService {
 }
 
 // generateUniqueShortUrl 함수가 @Injectable() 데코레이터 아래에 포함되지 않는 이유: 서비스 클래스의 메소드가 아니며, 서비스 클래스가 아닌 독립적인 함수 -> 서비스 클래스와 독립적으로 작동, 서비스 클래스에 직접 종속 x
-// 1-1. 고유한 short url 생성하는 로직 (중복되지 않는 short url)
 
-    // alnum을 사용하는 방법 -> 위에서 import { } from alnum, npm install alnum  
+// 1-1. 고유한 short url 생성하는 로직 (중복되지 않는 short url)
+       // 1)alnum을 사용하는 방법 -> 위에서 import { } from alnum, npm install alnum  
     function generateUniqueShortUrl(length: number): string {
         let result = '';
         const charactersLength = alnum.length;
@@ -72,7 +88,7 @@ export class UrlService {
         return result
     }
 
-// //alnum 사용 없이 하는 방법 
+//      // 2) alnum 사용 없이 하는 방법 
 //     function generateUniqueShortUrl(): string {
 //         const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 //         const length = 8;               // 길이가 8인 문자열, 영문 대소문자, 숫자 사용
