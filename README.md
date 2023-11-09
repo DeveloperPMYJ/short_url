@@ -1,9 +1,11 @@
 ### short url 생성 기능 : 구조 만들기, 데이터베이스 설계 및 구축
 ## shortid 패키지 활용 
 간결하고 고유한 짧은 문자열을 생성하는 데 사용되는 라이브러리
-yarn add shortid
+
+
+* yarn add shortid
 or
-npm i shortid 
+* npm i shortid 
 
 ### URL 단축 서비스의 활용
 
