@@ -1,6 +1,11 @@
 ### short url 생성 기능 : 구조 만들기, 데이터베이스 설계 및 구축
+## shortid 패키지 활용 
+간결하고 고유한 짧은 문자열을 생성하는 데 사용되는 라이브러리
+yarn add shortid
+or
+npm i shortid 
 
-### short Url의 활용
+### URL 단축 서비스의 활용
 
 어느 서비스에서나 쓰일 수 있는 url 주소 단축 기능은, 주로 주소 복사 및 공유할 때 쓰인다. 불필요하게 긴 주소는 공유할 때 번거롭기 때문이다. 이번 프로젝트에서는 단순 기능개발에 목적을 두기보다, 구조화와 개발 환경 구축에 초점을 맞추었다.
 
@@ -20,7 +25,6 @@
     
     1) localhost:3000/ 뒤에 위치하는 shorturl (const fullShortUrl = baseUrl + shortUrl; )
     2) short url 고유하게 만드는 로직: (도메인 부분을 제외한) 뒷부분’ 절대 중복되지 않도록 (영문 대소문자, 가끔 하나의 숫자)
-    
     3)  user ip로 하루 short URL 변환 횟수 확인: 저장한 ip 주소 - 일 30회만 변환 가능하게 작업 
     
 - **DB에 데이터 저장:** original url , short url, user IP (insert into)
