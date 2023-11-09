@@ -1,7 +1,10 @@
 ## for 문을 활용한 임의의 문자열 알고리즘  
-short Url 기능 구현 첫 번째 방법 
+short Url 기능 구현 첫 번째 방법
+
 
 ### short url 생성 기능 : 구조 만들기, 데이터베이스 설계 및 구축
+
+
 
 ## URL 단축 서비스의 활용 
 
@@ -37,7 +40,7 @@ short Url 기능 구현 첫 번째 방법
 - **original url로 Redirect**
 
 
-### DB 설정
+## DB 설정
 
 - ormconfig.js 파일 생성
 - shorturl 칼럼에 unique 제약조건 추가
