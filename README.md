@@ -39,6 +39,8 @@
 - ormconfig.js 파일 생성
 - shorturl 칼럼에 unique 제약조건 추가
 
+https://github.com/DeveloperPMYJ/short_url/assets/142304129/1fdcab1c-4d4e-4a1c-9bf8-481b27a2cf9f  
+
 일반적으로 사용되는 https://www.shorturl.at/ , https://bitly.com/ 를 참고하여, 도메인 부분은 localhost:port로 default 값으로 하고, 뒷부분이 변경되도록
 
 
