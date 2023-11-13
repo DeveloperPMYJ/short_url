@@ -15,7 +15,7 @@ export class UrlEntity {
   originalUrl: string;
 
   @Column({ unique: true, type: 'varchar', length: 200, nullable: false }) // shortenUrl은 중복되지 않아야 함
-  shortUrl: string;
+  hash: string;
 
   @Column({ type: 'varchar', length: 200, nullable: false })
   userIp: string;

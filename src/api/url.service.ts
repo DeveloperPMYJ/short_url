@@ -8,13 +8,13 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 
 @Injectable()
 export class UrlService {
-  constructor(
+    constructor(
     @InjectRepository(UrlEntity)
     private urlRepo: Repository<UrlEntity>, // Entity class 지정
-  ) {}
+    ) {}
 
   //short url 생성
-  async createShortUrl(originalUrl: string, userIp: string): Promise<string> {
+async createShortUrl(originalUrl: string, userIp: string): Promise<string> {
     // 1. user ip 로 하루 short url 변환 횟수 확인
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -33,69 +33,68 @@ export class UrlService {
 
     // 2. short url
     const baseUrl = 'http://localhost:3000/';
-    const newUrl = generateUniqueShortUrl();
-    const shortUrl = baseUrl + newUrl;
+    const hash = generateUniqueShortUrl();   //뒷부분 난수
+    const shortUrl = baseUrl + hash;
 
-    console.log(shortUrl);
+    // console.log(shortUrl);
 
-    //데이터베이스에 'shortUrl,originalUrl, userIp' 저장 (repo)
+    //데이터베이스에 'hash ,originalUrl, userIp' 저장 (repo)
     await this.urlRepo
-      .createQueryBuilder()
-      .insert()
-      .into(UrlEntity)
-      .values({
-        originalUrl: originalUrl,
-        shortUrl: shortUrl,
-        userIp: userIp,
-      })
-      .execute();
+        .createQueryBuilder()
+        .insert()
+        .into(UrlEntity)
+        .values({
+            originalUrl: originalUrl,
+            hash: hash,
+            userIp: userIp,
+        })
+        .execute();
 
     return shortUrl;
-  }
+    }
 
   // 2. "새로운 URL 리디렉션 api" server - redirect -> [service에서 originalUrl 호출]
 
   //  "originalUrl 호출" shortUrl에 해당하는 UrlEntity를 데이터베이스에서 찾기
-  async findOriginalUrlByShorten(
-    shortUrl: string,
-  ): Promise<string | undefined> {
-    console.log(shortUrl);
-    const urlEntity = await this.urlRepo.findOne({
-      where: { shortUrl },
-    }); //  findOne 메서드를 사용할 때 해당 엔터티의 속성과 일치하는 조건을 전달해야 한다
-    console.log(urlEntity);
+    async findOriginalUrlByShorten(
+        hash: string,
+    ): Promise<string | undefined> {
+    console.log(hash);
+        const urlEntity = await this.urlRepo.findOne({
+        where: { hash },
+        }); 
+    // console.log(urlEntity);
     return urlEntity ? urlEntity.originalUrl : undefined;
-  }
+}
 
-  async redirectByShortUrl(
-    @Res() res: Response,
-    shortUrl: string,
-  ): Promise<void> {
-    const originalUrl = await this.findOriginalUrlByShorten(shortUrl);
+    async redirectUrl(
+        @Res() res: Response,
+        hash: string,
+    ): Promise<void> {
+    const originalUrl = await this.findOriginalUrlByShorten(hash);
 
-    if (!originalUrl) {
-      throw new NotFoundException(
+        if (!originalUrl) {
+        throw new NotFoundException(
         'Short URL에 해당되는 원본 URL을 찾을 수 없습니다',
-      );
+        );
+        }
     }
-  }
 }
 
 // 고유한 short url
 // alnum 없이 하는 방법
 function generateUniqueShortUrl(): string {
-  const characters =
-    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  const length = 8; // 길이가 8인 문자열, 영문 대소문자, 숫자 사용
-  let uniqueShortUrl = '';
+    const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const length = 8; // 길이가 8인 문자열, 영문 대소문자, 숫자 사용
+    let uniqueShortUrl = '';
 
-  for (let i = 0; i < length; i++) {
-    const randomIndex = Math.floor(Math.random() * characters.length);
-    uniqueShortUrl += characters.charAt(randomIndex);
-  }
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        uniqueShortUrl += characters.charAt(randomIndex);
+    }
 
-  return uniqueShortUrl;
-}
+    return uniqueShortUrl;
+    }
 
 // Repository 패턴과 TypeORM과 같은 ORM(Object-Relational Mapping) 라이브러리를 사용하는 경우,
 // Repository 클래스를 통해 데이터베이스와 상호작용하고 "쿼리 빌더"를 사용 }
