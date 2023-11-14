@@ -5,7 +5,7 @@
 ```bash
 $ yarn add shortid
 $ npm i shortid 
-```
+``` 
 
 ## URL 단축 서비스의 활용 
 
@@ -40,7 +40,7 @@ $ npm i shortid
 - **original url로 Redirect**
 
 
-### DB 설정
+## DB 설정
 
 - ormconfig.js 파일 생성
 - shorturl 칼럼에 unique 제약조건 추가

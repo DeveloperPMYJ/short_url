@@ -1,6 +1,8 @@
 # Ignore ormconfig.js
 ormconfig.js
 
+local.env 
+
 # compiled output
 /dist
 /node_modules

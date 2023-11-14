@@ -1,41 +1,33 @@
-import { Body, Controller, Get, Param, Post, Redirect } from '@nestjs/common'
-import { Response } from 'express'
-import { UrlService } from './url.service'
+import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
+import { UrlService } from './url.service';
 
-// "shorturl 생성 api" 
-@Controller('shorten-url')                               // 컨트롤러 클래스 정의
+
+@Controller()  
 export class UrlController {
-    constructor(private urlService: UrlService) {}      //인스턴스: 클래스 / constructor:클래스의 생성자 메서드, UrlService & UrlRepo에 의존성 주입
-    // UrlService 생성자 통해 주입 받음. 
+  constructor(private urlService: UrlService) {} 
 
-    // short 생성 : original, short url, user IP 를 하나의 테이블에 저장
-    @Post()
-    async shortenUrl(@Body() data: {originalUrl: string, userIp: string}) {
-        const { originalUrl, userIp } = data; 
-
-
-        try {
-        const shortUrl = await this.urlService.createShortUrl(originalUrl, userIp);
-        return { shortUrl }; 
-        } catch (error) {
-        return {error: error.message}
-        }
-    } // shortenUrl 메서드에서,'UrlService'의 createShortUrl 메서드 호출 (shortUrl, await), return shorturl
+  // redirect api 
+  @Get(':hash')       // create 시 (original post 시 프로토콜까지 https, http인지 알려줘야), get api : http://localhost:3000/a1VNq74h
+  async redirectToOriginalUrl(
+      @Param('hash') hash: string, 
+      @Res() response) {
+  const originalUrl = await this.urlService.findOriginalUrlByShorten(hash);
+  response.redirect(302, originalUrl );
 }
 
+  // short 생성 
+  @Post('shorten-url/create')
+  async shortenUrl(@Body() data: { originalUrl: string; userIp: string }) {
+    const { originalUrl, userIp } = data;
 
-// "새로운 URL 리디렉션 api" server - redirect
-@Controller() 
-export class UrlRedirectController {
-    constructor(private readonly urlService: UrlService) {}
-
-    @Get(':shortUrl')
-    @Redirect('', 301)
-    async Redirect(@Param('shortUrl') shortUrl: string){
-        const originalUrl = await this.urlService.findOriginalUrlByShorten(shortUrl);
-        return { url: originalUrl || '/' };
+    try {
+      const shortUrl = await this.urlService.createShortUrl(
+        originalUrl,
+        userIp,
+      );
+      return { shortUrl };
+    } catch (error) {
+      return { error: error.message };
     }
+  } 
 }
-
-
-
