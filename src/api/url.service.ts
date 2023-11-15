@@ -5,6 +5,7 @@ import { UrlEntity } from 'src/entities/url.entity';
 import { characters as alnum } from 'alnum';
 import { Response } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { generateUniqueShortUrl } from 'src/utils/generate';
 
 @Injectable()
 export class UrlService {
@@ -72,22 +73,12 @@ export class UrlService {
         );
         }
     }
-}
+}  
 
-// 고유한 short url
-// alnum 없이 하는 방법
-function generateUniqueShortUrl(): string {
-    const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    const length = 8; // 길이가 8인 문자열, 영문 대소문자, 숫자 사용
-    let uniqueShortUrl = '';
 
-    for (let i = 0; i < length; i++) {
-        const randomIndex = Math.floor(Math.random() * characters.length);
-        uniqueShortUrl += characters.charAt(randomIndex);
-    }
 
-    return uniqueShortUrl;
-    }
+
+
 
 // Repository 패턴과 TypeORM과 같은 ORM(Object-Relational Mapping) 라이브러리를 사용하는 경우,
 // Repository 클래스를 통해 데이터베이스와 상호작용하고 "쿼리 빌더"를 사용 }
