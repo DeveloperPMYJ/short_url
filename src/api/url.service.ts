@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, Res } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, Res } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UrlEntity } from 'src/entities/url.entity';
@@ -28,7 +28,7 @@ export class UrlService {
 
         // 변환 횟수 (urlCount) 30회 이상 -> throw NotFoundException (요청 제한)
         if (urlCount >= 30) {
-            throw new NotFoundException('Short URL 변환 횟수가 제한을 초과하였습니다');
+            throw new ForbiddenException('Short URL 변환 횟수가 제한을 초과하였습니다');
         }
 
         // short url
