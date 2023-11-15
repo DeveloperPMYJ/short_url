@@ -1,10 +1,11 @@
-import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
+import { Body, Controller, Post, Res } from '@nestjs/common';
 import { UrlService } from './url.service';
 
 
 @Controller('shorten-url')  
 export class UrlController {
   constructor(private urlService: UrlService) {} 
+  
   // short 생성 
   @Post('create')
   async shortenUrl(@Body() data: { originalUrl: string; userIp: string }) {
