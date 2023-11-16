@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, Post, Delete, Param, Res, HttpStatus } from '@nestjs/common';
 import { UrlService } from './url.service';
 
 
@@ -21,4 +21,10 @@ export class UrlController {
       return { error: error.message };
     }
   } 
+
+  @Delete (':hash/delete')
+  async deleteShortUrl(@Param ('hash') hash:string){
+    await this.urlService.deleteShortUrl(hash)
+    return { sucess: true }
+  }
 }
