@@ -6,6 +6,7 @@ import { characters as alnum } from 'alnum';
 import { Response } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { generateUniqueShortUrl } from 'src/utils/generate';
+import { urlencoded } from 'express';
 
 @Injectable()
 export class UrlService {
@@ -16,6 +17,7 @@ export class UrlService {
 
   //1. short url 생성
     async createShortUrl(originalUrl: string, userIp: string): Promise<string> {
+
         // user ip 로 하루 short url 변환 횟수 확인
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -46,7 +48,7 @@ export class UrlService {
                 originalUrl: originalUrl,
                 hash: hash,
                 userIp: userIp,
-            })
+            })   
             .execute();
 
         return hash;     // Promise 가 있기에 return 해줘야 함
@@ -73,12 +75,44 @@ export class UrlService {
         );
         }
     }
-}  
+
+    async deleteShortUrl(hash: string): Promise<void> {
+
+    // // orm 적용
+    //     const urlEntity = await this.urlRepo.findOne({where: {hash} });
+    //     if ( !urlEntity) { 
+    //         throw new NotFoundException ('해당 Short Url을 찾을 수 없습니다')
+    //     }  
+    //     urlEntity.deletedAt = new Date();            //orm에도 soft delete 하는 게 있음
+    //     await this.urlRepo.save(urlEntity);
+
+
+    // query builder 적용 
+        const deleteResult = await this.urlRepo.createQueryBuilder()
+            .softDelete()
+            .from (UrlEntity)
+            .where('hash = :hash', { hash })
+            .execute (); 
+    }
+}
 
 
 
+// 심화 
+
+// const baseUrl = process.env.BASE_URL
+// const protocal = ensureProtocol(originalUrl, 'http')
+// utils - protocol 에 함수 
+// export function ensureProtocol ( url:string, defaultProtocol:string )
+
+
+// this.repo.save = insert()
+// this.repo.findOne()= select ()
+
+
+// nest g mo users -> users directory  만드는 (스펙까지)
+// nest g s users -> users.services.ts 만든느 
+// nest g co users --no-spec -> 스펙 없이 users.controller.ts 만드는 
 
 
 
-// Repository 패턴과 TypeORM과 같은 ORM(Object-Relational Mapping) 라이브러리를 사용하는 경우,
-// Repository 클래스를 통해 데이터베이스와 상호작용하고 "쿼리 빌더"를 사용 }

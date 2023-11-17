@@ -21,3 +21,6 @@ export class AppController {
     return this.appService.getHello();
   }
 }
+
+// return url?originalUrl
+// repo를 빼는 이유: transaction . 지금은 안 쓰니 그 목적이. 
