@@ -76,14 +76,22 @@ export class UrlService {
     }
 
     async deleteShortUrl(hash: string): Promise<void> {
-        const urlEntity = await this.urlRepo.findOne({where: {hash} });
-        if ( !urlEntity) { 
-            throw new NotFoundException ('해당 Short Url을 찾을 수 없습니다')
-        }  
 
-        urlEntity.deletedAt = new Date();
-        await this.urlRepo.save(urlEntity);
+    // orm 적용
+        // const urlEntity = await this.urlRepo.findOne({where: {hash} });
+        // if ( !urlEntity) { 
+        //     throw new NotFoundException ('해당 Short Url을 찾을 수 없습니다')
+        // }  
+
+        // urlEntity.deletedAt = new Date();
+        // await this.urlRepo.save(urlEntity);
+
+
+    // query builder 적용 
+        const deleteResult = await this.urlRepo.createQueryBuilder()
+            .softDelete()
+            .from (UrlEntity)
+            .where('hash = :hash', { hash })
+            .execute (); 
     }
 }
-// Repository 패턴과 TypeORM과 같은 ORM(Object-Relational Mapping) 라이브러리를 사용하는 경우,
-// Repository 클래스를 통해 데이터베이스와 상호작용하고 "쿼리 빌더"를 사용 }
