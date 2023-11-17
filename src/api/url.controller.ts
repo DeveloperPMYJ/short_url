@@ -1,5 +1,6 @@
-import { Body, Controller, Post, Delete, Param, Res, HttpStatus } from '@nestjs/common';
+import { Body, Controller, Post, Delete, Param, Res, HttpStatus, Req } from '@nestjs/common';
 import { UrlService } from './url.service';
+import { Request } from 'express';
 
 
 @Controller('shorten-url')  
@@ -8,16 +9,18 @@ export class UrlController {
 
   // short 생성 
   @Post('create')
-  async shortenUrl(@Body() data: { originalUrl: string; userIp: string }) {
-    const { originalUrl, userIp } = data;
+  async shortenUrl(
+    @Body() data: { originalUrl: string }, @Req () req : Request) {
+    const userIp = req.ip    //프론트가 userIp를 주는게 아니라, Request에서 받아오는 거로. 
+      const { originalUrl } = data;
 
     try {
       const shortUrl = await this.urlService.createShortUrl(
-        originalUrl,
-        userIp,
+        originalUrl, userIp
       );
-      return { shortUrl };
-    } catch (error) {
+  
+      return {shortUrl};    
+      } catch (error) {
       return { error: error.message };
     }
   } 

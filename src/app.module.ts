@@ -6,7 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UrlEntity } from './entities/url.entity';
 import configuration from '../config/configuration';
-
+import * as express from 'express';
 import * as path from 'path';
 
 const config_file = './config/configuration.ts';
